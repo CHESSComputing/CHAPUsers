@@ -1,0 +1,25 @@
+pipeline:
+
+  # Collect map data
+  - common.YAMLReader:
+      filename: examples/saxswaxs/map_1d.yaml
+      schema: MapConfig
+  - common.MapProcessor
+  - common.NexusWriter:
+      filename: examples/saxswaxs/saxswaxs_map.nxs
+      force_overwrite: true
+
+  # Integrate map detetcor data
+  - pipeline.MultiplePipelineItem:
+      items:
+        - common.YAMLReader:
+            filename: examples/saxswaxs/map_1d.yaml
+            schema: MapConfig
+        - common.YAMLReader:
+            filename: examples/saxswaxs/integration_saxs_azimuthal.yaml
+            schema: IntegrationConfig
+  - common.IntegrateMapProcessor
+  - common.NexusWriter:
+      filename: examples/saxswaxs/saxs_azimuthal_integrated.nxs
+      force_overwrite: true
+  - users.vkuznet.userprocessor.UserProcessor: {}
